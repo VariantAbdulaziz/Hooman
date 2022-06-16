@@ -14,8 +14,9 @@ class Material:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         image = Image.open(filepath)
         width, height = image.size
-        data = np.array(list(image.getdata()), dtype=np.uint8)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
+        data = image.transpose(Image.FLIP_TOP_BOTTOM).tobytes()
+        image.close()
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
         glGenerateMipmap(GL_TEXTURE_2D)
 
     def bind(self):
