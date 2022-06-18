@@ -1,7 +1,8 @@
 import pygame
 from OpenGL.GL import *
 import time
-from game import Game
+from game import Game, GameState
+
 
 class App:
 
@@ -19,21 +20,20 @@ class App:
 
         self.mainloop()
 
-
     def mainloop(self):
-        isJumping = False
-
         cur_time = time.time()
         game = Game(self.display)
 
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    game.delete()
                     pygame.quit()
                     quit()
 
                 if event.type == pygame.KEYDOWN:
-                    isJumping = True
+                    game.prevState = game.state
+                    game.state = GameState.JUMPING
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -41,11 +41,12 @@ class App:
             cur_time = time.time()
             dt = cur_time - prev_time
 
-            isJumping = game.processInput(dt, isJumping)
+            game.update(dt)
             game.render()
 
             pygame.display.flip()
-            pygame.time.wait(1)
+            pygame.time.wait(10)
+
 
 if __name__ == "__main__":
     App()
